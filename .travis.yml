@@ -22,7 +22,8 @@ install:
   - export MY_GH_REPO_NAME=$(echo ${TRAVIS_REPO_SLUG} | cut -f 2 -d /)
   - pip install -U poetry
   - pip install -U tox-travis
-  - pip install -U coverage
+  - poetry add --dev coverage="*"
+  - pip install -U codecov
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ~/cc-test-reporter
   - chmod +x ~/cc-test-reporter
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ~/cc-test-reporter before-build; fi
@@ -32,6 +33,7 @@ script:
   - tox
 
 after_script:
-  - coverage run --source auto_changelog -m pytest
-  - coverage report -m
+  - poetry run coverage run --source auto_changelog -m pytest
+  - poetry run coverage report -m
+  - codecov
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ~/cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
